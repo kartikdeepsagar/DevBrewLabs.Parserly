@@ -1,9 +1,9 @@
+> [!NOTE]
+> **Rebranding Notice**: This library was previously known as **AlphaX.Parserz** and has been rebranded to **DevBrewLabs.Parserly**. All package IDs, namespaces, and references have been updated.
 
-# AlphaX.Parserz
+# DevBrewLabs.Parserly
 
 A strong & fast .NET Standard [Parser Combinator](https://en.wikipedia.org/wiki/Parser_combinator#:~:text=In%20computer%20programming%2C%20a%20parser,new%20parser%20as%20its%20output.) library for creating simple/complex parsers. This library is being actively developed. 
-
-GitHub Repo : https://github.com/kartikdeepsagar/AlphaX.Parserz
 
 # Architecture of the library
 
@@ -69,9 +69,9 @@ public interface IParserError
 
 **Message** - Error message with failure information.
 
-# Creating a simple digit parser with *AlphaX.Parserz*
+# Creating a simple digit parser with *DevBrewLabs.Parserly*
 
-Create a *DigitParser* class by inheriting *AlphaX.Parserz.[Parser<T>](https://github.com/kartikdeepsagar/AlphaX.Parserz/blob/master/AlphaX.Parserz/Parsers/ParserBase.cs)* class and override its **ParseInput** method as follows:
+Create a *DigitParser* class by inheriting *DevBrewLabs.Parserly.[Parser<T>](https://github.com/kartikdeepsagar/DevBrewLabs.Parserly/blob/master/DevBrewLabs.Parserly/Parsers/ParserBase.cs)* class and override its **ParseInput** method as follows:
 ```c#
 public class DigitParser : Parser<ByteResult>
 {
@@ -135,14 +135,14 @@ You can see that we have used an extension method i.e. **Many** in the above cod
 ```
 Similarly, you can combine small parsers to make a more complex parser. For example, you can create a basic email (gmail/microsoft) parser as follows:
 ```c#
-var @parser = AlphaX.Parserz.Parser.String("@");
-var dotParser = AlphaX.Parserz.Parser.String(".");
-var comParser = AlphaX.Parserz.Parser.String("com");
-var gmailParser = AlphaX.Parserz.Parser.String("gmail");
-var microsoftParser = AlphaX.Parserz.Parser.String("microsoft");
+var @parser = DevBrewLabs.Parserly.Parser.String("@");
+var dotParser = DevBrewLabs.Parserly.Parser.String(".");
+var comParser = DevBrewLabs.Parserly.Parser.String("com");
+var gmailParser = DevBrewLabs.Parserly.Parser.String("gmail");
+var microsoftParser = DevBrewLabs.Parserly.Parser.String("microsoft");
 
 // username parser to parse names starting with letters and then containing letters/digits
-var userNameParser = AlphaX.Parserz.Parser.Letter.Many()
+var userNameParser = DevBrewLabs.Parserly.Parser.Letter.Many()
    .AndThen(Parser.LetterOrDigit.Many())
    .MapResult(x => x.ToStringResult()); // converting to string result
 
@@ -186,14 +186,14 @@ var email = result.Result as EmailResult;
 Console.WriteLine(JsonConvert.SerializeObject(email.Value)); // {"UserName":"testuser","Domain":"@gmail.com"}
 ```
 # Tracing
-This library also allows you to trace parser steps using the '*AlphaX.Parserz.Tracing.ParserTracer*'.
+This library also allows you to trace parser steps using the '*DevBrewLabs.Parserly.Tracing.ParserTracer*'.
 
 In order to use the parser tracing. You need to set the **Enable** property to true which is false by default.
 
 All the Traces can retrieved using the **GetTrace** method as follows:
 ```c#
 ParserTracer.Enabled = true;
-var result = emailParser.Run("emailparser1@alphax.com");
+var result = emailParser.Run("emailparser1@devbrewlabs.com");
 IEnumerable<Trace> traces = ParserTracer.GetTraces();
 Console.WriteLine(string.Join(Environment.NewLine, ParserTracer.GetTraces()));
 ParserTracer.Reset();
