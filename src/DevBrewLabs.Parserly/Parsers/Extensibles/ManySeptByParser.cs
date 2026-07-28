@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using DevBrewLabs.Parserly.Resources;
 
 namespace DevBrewLabs.Parserly
@@ -10,18 +10,17 @@ namespace DevBrewLabs.Parserly
         public int MinCount { get; }
         public int MaxCount { get; }
 
-        public ManySeptByParser(IParser parser, IParser septByParser, int minCount, int maxCount, bool allowTrace)
+        public ManySeptByParser(IParser parser, IParser septByParser, int minCount, int maxCount)
         {
             Parser = parser;
             SeptByParser = septByParser;
             MinCount = minCount;
             MaxCount = maxCount;
-            AllowTrace = allowTrace;
         }
 
         protected override IParserState ParseInput(IParserState inputState)
         {
-            List<IParserResult> results = new List<IParserResult>();
+            List<IParserResult> results = new List<IParserResult>(4);
 
             IParserState errorState = null;
             while (true)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using DevBrewLabs.Parserly.Resources;
 
 namespace DevBrewLabs.Parserly
@@ -8,27 +8,26 @@ namespace DevBrewLabs.Parserly
         private const string TRUE = "true";
         private const string FALSE = "false";
 
-        public BooleanParser()
-        {
-            AllowTrace = true;
-        }
-
         protected override IParserState ParseInput(IParserState inputState)
         {
-            var targetString = inputState.Input;
+            var input = inputState.ActualInput;
+            var index = inputState.Index;
+            var remaining = input.AsSpan(index);
 
-            if (TRUE.Length <= targetString.Length && targetString.StartsWith(TRUE, StringComparison.InvariantCultureIgnoreCase))
+            if (remaining.Length >= TRUE.Length &&
+                remaining.StartsWith(TRUE.AsSpan(), StringComparison.OrdinalIgnoreCase))
             {
-                return ParserStates.Result(inputState, new BooleanResult(true), inputState.Index + TRUE.Length);
+                return ParserStates.Result(inputState, new BooleanResult(true), index + TRUE.Length);
             }
 
-            if (FALSE.Length <= targetString.Length && targetString.StartsWith(FALSE, StringComparison.InvariantCultureIgnoreCase))
+            if (remaining.Length >= FALSE.Length &&
+                remaining.StartsWith(FALSE.AsSpan(), StringComparison.OrdinalIgnoreCase))
             {
-                return ParserStates.Result(inputState, new BooleanResult(false), inputState.Index + FALSE.Length);
+                return ParserStates.Result(inputState, new BooleanResult(false), index + FALSE.Length);
             }
 
-            return ParserStates.Error(inputState, new ParserError(inputState.Index,
-                string.Format(ParserMessages.UnexpectedInputError, inputState.Index, $"{TRUE}/{FALSE}", targetString)));
+            return ParserStates.Error(inputState, new ParserError(index,
+                string.Format(ParserMessages.UnexpectedInputError, index, $"{TRUE}/{FALSE}", remaining.Length > 0 ? remaining[0].ToString() : string.Empty)));
         }
     }
 }

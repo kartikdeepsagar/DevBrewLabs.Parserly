@@ -5,6 +5,7 @@
     /// </summary>
     public interface IParser
     {
+        bool AllowTrace { get; set; }
         /// <summary>
         /// Runs the parser for input string.
         /// </summary>

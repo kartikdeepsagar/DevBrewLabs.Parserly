@@ -9,11 +9,10 @@ namespace DevBrewLabs.Parserly
         public IParser Parser { get; }
         public Func<TIn, TOut> ResultMap { get; set; }
 
-        public ResultMappedParser(IParser parser, Func<TIn, TOut> resultMap, bool allowTrace)
+        public ResultMappedParser(IParser parser, Func<TIn, TOut> resultMap)
         {
             Parser = parser;
             ResultMap = resultMap;
-            AllowTrace = allowTrace;
         }
 
         protected override IParserState ParseInput(IParserState inputState)

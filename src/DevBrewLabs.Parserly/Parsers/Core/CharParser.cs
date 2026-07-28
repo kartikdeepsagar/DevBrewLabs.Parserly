@@ -1,4 +1,4 @@
-﻿using DevBrewLabs.Parserly.Resources;
+using DevBrewLabs.Parserly.Resources;
 
 namespace DevBrewLabs.Parserly
 {
@@ -9,26 +9,26 @@ namespace DevBrewLabs.Parserly
         public CharParser(char value)
         {
             Value = value;
-            AllowTrace = true;
         }
 
         protected override IParserState ParseInput(IParserState inputState)
         {
-            var targetString = inputState.Input;
+            var input = inputState.ActualInput;
+            var index = inputState.Index;
 
-            if (string.IsNullOrEmpty(targetString))
-                return ParserStates.Error(inputState, new ParserError(inputState.Index,
-                    string.Format(ParserMessages.UnexpectedInputError, inputState.Index, Value.ToString(), targetString)));
+            if (index >= input.Length)
+                return ParserStates.Error(inputState, new ParserError(index,
+                    string.Format(ParserMessages.UnexpectedInputError, index, Value.ToString(), string.Empty)));
 
-            var character = targetString[0];
+            var character = input[index];
 
             if (character == Value)
             {
-                return ParserStates.Result(inputState, new CharResult(Value), inputState.Index + 1);
+                return ParserStates.Result(inputState, new CharResult(Value), index + 1);
             }
 
-            return ParserStates.Error(inputState, new ParserError(inputState.Index,
-                string.Format(ParserMessages.UnexpectedInputError, inputState.Index, Value.ToString(), character)));
+            return ParserStates.Error(inputState, new ParserError(index,
+                string.Format(ParserMessages.UnexpectedInputError, index, Value.ToString(), character)));
         }
 
         public override string ToString()

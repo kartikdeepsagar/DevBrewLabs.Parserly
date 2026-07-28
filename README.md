@@ -1,9 +1,19 @@
+
 > [!NOTE]
 > **Rebranding Notice**: This library was previously known as **AlphaX.Parserz** and has been rebranded to **DevBrewLabs.Parserly**. All package IDs, namespaces, and references have been updated.
 
 # DevBrewLabs.Parserly
 
 A strong & fast .NET Standard [Parser Combinator](https://en.wikipedia.org/wiki/Parser_combinator#:~:text=In%20computer%20programming%2C%20a%20parser,new%20parser%20as%20its%20output.) library for creating simple/complex parsers. This library is being actively developed. 
+
+## 🚀 What's New in v1.0.2
+
+### ⚡ Performance Improvements
+This release focuses on **performance optimizations** across the parsers.
+
+- **Up to 50% faster parsing performance** in core parsers.
+- Reduced internal allocations to improve throughput.
+- Various internal refactorings and bug fixes.
 
 # Architecture of the library
 
@@ -117,13 +127,13 @@ Lets look at some examples for getting a headstart.
 
 * Parsing Digit
 ```c#
-var resultState = Parser.Digit.Run("1");
+var resultState = Parser.Digit().Run("1");
 ```
 * Parsing Multiple Digits
 ```c#
 int minimumCount = 1;
 int maximumCount = 3;
-var threeDigitParser = Parser.Digit.Many(1, 3);
+var threeDigitParser = Parser.Digit().Many(1, 3);
 var resultState = threeDigitParser.Run("874");
 ```
 You can see that we have used an extension method i.e. **Many** in the above code. It just returns a new ManyParser which basically runs the input parser on the input string provided number (min/max) of times.
@@ -142,8 +152,8 @@ var gmailParser = DevBrewLabs.Parserly.Parser.String("gmail");
 var microsoftParser = DevBrewLabs.Parserly.Parser.String("microsoft");
 
 // username parser to parse names starting with letters and then containing letters/digits
-var userNameParser = DevBrewLabs.Parserly.Parser.Letter.Many()
-   .AndThen(Parser.LetterOrDigit.Many())
+var userNameParser = DevBrewLabs.Parserly.Parser.AnyLetter().Many()
+   .AndThen(Parser.AnyLetterOrDigit().Many())
    .MapResult(x => x.ToStringResult()); // converting to string result
 
 // domain parser for example, @gmail.com

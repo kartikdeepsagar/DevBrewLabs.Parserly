@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -7,9 +7,9 @@
     <PackageIcon>Icon.png</PackageIcon>
     <PackageIconUrl />
     <Description>A simple &amp; fast library to create parsers using the parser-combinators.</Description>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.1</FileVersion>
+    <FileVersion>1.0.2</FileVersion>
     <PackageId>DevBrewLabs.Parserly</PackageId>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -27,26 +27,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Memory" Version="4.5.5" />
     <None Include="..\..\README.md" Link="README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
     <EmbeddedResource Include="Icon.png" Pack="True" PackagePath="\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Resources\ParserMessages.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>ParserMessages.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Resources\ParserMessages.resx">
-      <LastGenOutput>ParserMessages.Designer.cs</LastGenOutput>
-      <Generator>ResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

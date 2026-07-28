@@ -1,30 +1,26 @@
-﻿using DevBrewLabs.Parserly.Resources;
+using DevBrewLabs.Parserly.Resources;
 
 namespace DevBrewLabs.Parserly
 {
     internal class DigitParser : Parser<DoubleResult>
     {
-        public DigitParser()
-        {
-            AllowTrace = true;
-        }
-
         protected override IParserState ParseInput(IParserState inputState)
         {
-            var targetString = inputState.Input;
+            var input = inputState.ActualInput;
+            var index = inputState.Index;
 
-            if (string.IsNullOrEmpty(targetString))
-                return ParserStates.Error(inputState, new ParserError(inputState.Index,
-                    string.Format(ParserMessages.UnexpectedInputError, inputState.Index, ParserMessages.Digits, targetString)));
+            if (index >= input.Length)
+                return ParserStates.Error(inputState, new ParserError(index,
+                    string.Format(ParserMessages.UnexpectedInputError, index, ParserMessages.Digits, string.Empty)));
 
-            var character = targetString[0];
+            var character = input[index];
             if (char.IsDigit(character))
             {
-                return ParserStates.Result(inputState, new DoubleResult(character - '0'), inputState.Index + 1);
+                return ParserStates.Result(inputState, new DoubleResult(character - '0'), index + 1);
             }
 
-            return ParserStates.Error(inputState, new ParserError(inputState.Index,
-                string.Format(ParserMessages.UnexpectedInputError, inputState.Index, ParserMessages.Digits, targetString)));
+            return ParserStates.Error(inputState, new ParserError(index,
+                string.Format(ParserMessages.UnexpectedInputError, index, ParserMessages.Digits, character)));
         }
     }
 }

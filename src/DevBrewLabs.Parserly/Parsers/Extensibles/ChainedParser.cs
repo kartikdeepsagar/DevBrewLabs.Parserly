@@ -7,11 +7,10 @@ namespace DevBrewLabs.Parserly
         public IParser PreviousParser { get; }
         public Func<IParserResult, IParser> NextParserFunc { get; }
 
-        public ChainedParser(IParser previousParser, Func<IParserResult, IParser> nextParserFunc, bool allowTrace)
+        public ChainedParser(IParser previousParser, Func<IParserResult, IParser> nextParserFunc)
         {
             PreviousParser = previousParser;
             NextParserFunc = nextParserFunc;
-            AllowTrace = allowTrace;       
         }
 
         protected override IParserState ParseInput(IParserState inputState)

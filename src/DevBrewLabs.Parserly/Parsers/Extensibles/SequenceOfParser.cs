@@ -6,10 +6,9 @@ namespace DevBrewLabs.Parserly
     {
         internal List<IParser> Parsers { get; }
 
-        public SequenceOfParser(IParser[] parsers, bool allowTrace)
+        public SequenceOfParser(IParser[] parsers)
         {
             Parsers = new List<IParser>(parsers);
-            AllowTrace = allowTrace;
         }
 
         protected override IParserState ParseInput(IParserState inputState)
