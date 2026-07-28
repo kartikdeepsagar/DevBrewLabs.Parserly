@@ -10,7 +10,7 @@ namespace DevBrewLabs.Parserly.Tests
         [TestCase("4")]
         public void DigitParser_Success_Test(string value)
         {
-            var resultState = Parser.Digit.Run(value);
+            var resultState = Parser.Digit().Run(value);
             Assert.AreEqual(resultState.Result.Type, ParserResultType.Number);
             Assert.IsFalse(resultState.IsError);
             Assert.IsInstanceOf(typeof(DoubleResult), resultState.Result);
@@ -24,7 +24,7 @@ namespace DevBrewLabs.Parserly.Tests
         [TestCase("x")]
         public void DecimalParser_Failure_Test(string value)
         {
-            var resultState = Parser.Digit.Run(value);
+            var resultState = Parser.Digit().Run(value);
             Assert.IsTrue(resultState.IsError);
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace DevBrewLabs.Parserly
+namespace DevBrewLabs.Parserly
 {
     /// <summary>
     /// Interface that represents a parser state.
@@ -6,17 +6,13 @@
     public interface IParserState : ICloneable<IParserState>
     {
         /// <summary>
-        /// Gets or state the current state index.
+        /// Gets or sets the current state index.
         /// </summary>
         int Index { get; set; }
         /// <summary>
         /// Gets or sets the actual input.
         /// </summary>
         string ActualInput { get; set; }
-        /// <summary>
-        /// Gets the input string for this state.
-        /// </summary>
-        string Input { get; }
         /// <summary>
         /// Gets if the state has error.
         /// </summary>

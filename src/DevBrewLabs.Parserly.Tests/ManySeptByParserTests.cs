@@ -9,7 +9,7 @@ namespace DevBrewLabs.Parserly.Tests
         [TestCase("0 0")]
         public void ManySeptByParserWithMinCount_SuccessTest(string input)
         {
-            var manyParser = Parser.Digit.ManySeptBy(Parser.WhiteSpace, 2);
+            var manyParser = Parser.Digit().ManySeptBy(Parser.WhiteSpace(), 2);
             var result = manyParser.Run(input);
             Assert.IsFalse(result.IsError);
         }
@@ -19,7 +19,7 @@ namespace DevBrewLabs.Parserly.Tests
         [TestCase("782 2")]
         public void ManySeptByParserWithMinCount_FailureTest(string input)
         {
-            var manyParser = Parser.Digit.ManySeptBy(Parser.WhiteSpace, 3);
+            var manyParser = Parser.Digit().ManySeptBy(Parser.WhiteSpace(), 3);
             var result = manyParser.Run(input);
             Assert.IsTrue(result.IsError);
         }
@@ -29,7 +29,7 @@ namespace DevBrewLabs.Parserly.Tests
         [TestCase("000,123,000")]
         public void ManySeptByParserWithMinMaxCount_SuccessTest(string input)
         {
-            var manyParser = Parser.Digit.Many(3, 3).ManySeptBy(Parser.Char(','), 2, 3);
+            var manyParser = Parser.Digit().Many(3, 3).ManySeptBy(Parser.Char(','), 2, 3);
             var result = manyParser.Run(input);
             Assert.IsFalse(result.IsError);
         }
@@ -39,7 +39,7 @@ namespace DevBrewLabs.Parserly.Tests
         [TestCase("225687322")]
         public void ManySeptByParserWithMinMaxCount_FailureTest(string input)
         {
-            var manyParser = Parser.Digit.Many(3, 3).ManySeptBy(Parser.Char(','), 2, 3);
+            var manyParser = Parser.Digit().Many(3, 3).ManySeptBy(Parser.Char(','), 2, 3);
             var result = manyParser.Run(input);
             Assert.IsTrue(result.IsError);
         }

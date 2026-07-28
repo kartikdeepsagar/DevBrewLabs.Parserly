@@ -1,4 +1,4 @@
-﻿namespace DevBrewLabs.Parserly
+namespace DevBrewLabs.Parserly
 {
     public static class ParserStates
     {
@@ -10,10 +10,7 @@
         /// <returns></returns>
         public static IParserState Error(IParserState inputState, IParserError error)
         {
-            var errorState = inputState.Clone();
-            errorState.Error = error;
-            errorState.Result = null;
-            return errorState;
+            return new ParserState(inputState.ActualInput, inputState.Index, null, error);
         }
 
         /// <summary>
@@ -25,10 +22,7 @@
         /// <returns></returns>
         public static IParserState Result(IParserState inputState, IParserResult result, int index)
         {
-            var resultState = inputState.Clone();
-            resultState.Index = index;
-            resultState.Result = result;
-            return resultState;
+            return new ParserState(inputState.ActualInput, index, result, null);
         }
     }
 }

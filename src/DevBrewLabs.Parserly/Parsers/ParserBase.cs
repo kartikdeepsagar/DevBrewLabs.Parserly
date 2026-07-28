@@ -8,11 +8,11 @@ namespace DevBrewLabs.Parserly
     /// <typeparam name="T"></typeparam>
     public abstract class Parser<T> : IParser<T> where T : IParserResult
     {
-        internal bool AllowTrace { get; set; }
+        public bool AllowTrace { get; set; }
 
         protected Parser()
         {
-            AllowTrace = false;
+            AllowTrace = true;
         }
 
         public IParserState Parse(IParserState inputState)

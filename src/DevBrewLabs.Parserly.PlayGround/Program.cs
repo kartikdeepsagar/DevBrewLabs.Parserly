@@ -16,7 +16,7 @@ namespace DevBrewLabs.Parserly.Playground
 
             // username parser to parse names starting with letters and then containing letters/digits
 
-            var userNameParser = DevBrewLabs.Parserly.Parser.Letter
+            var userNameParser = DevBrewLabs.Parserly.Parser.AnyLetter()
                .AndThen(Parser.AnyLetterOrDigit(ParseMode.Both).Many())
                .MapResult(x => x.ToStringResult()); // converting to string result
 

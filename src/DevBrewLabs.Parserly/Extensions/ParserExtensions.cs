@@ -16,7 +16,7 @@ namespace DevBrewLabs.Parserly
         public static IParser<T> MapError<T>(this IParser<T> parser, Func<IParserError, IParserError> errorMap, bool allowTrace = false)
             where T : IParserResult
         {
-            return new ErrorMappedParser<T>(parser, errorMap, allowTrace);
+            return new ErrorMappedParser<T>(parser, errorMap) { AllowTrace = allowTrace };
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace DevBrewLabs.Parserly
         /// <returns></returns>
         public static IParser MapError(this IParser parser, Func<IParserError, IParserError> errorMap, bool allowTrace = false)
         {
-            return new ErrorMappedParser<IParserResult>(parser, errorMap, allowTrace);
+            return new ErrorMappedParser<IParserResult>(parser, errorMap) { AllowTrace = allowTrace };
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace DevBrewLabs.Parserly
             where TIn : IParserResult
             where TOut : IParserResult
         {
-            return new ResultMappedParser<TIn, TOut>(parser, resultMap, allowTrace);
+            return new ResultMappedParser<TIn, TOut>(parser, resultMap) { AllowTrace = allowTrace };
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace DevBrewLabs.Parserly
         /// <returns>An error mapped parser.</returns>
         public static IParser MapResult(this IParser parser, Func<IParserResult, IParserResult> resultMap, bool allowTrace = false)
         {
-            return new ResultMappedParser<IParserResult, IParserResult>(parser, resultMap, allowTrace);
+            return new ResultMappedParser<IParserResult, IParserResult>(parser, resultMap) { AllowTrace = allowTrace };
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace DevBrewLabs.Parserly
         /// <returns>A chained parser.</returns>
         public static IParser Next(this IParser previousParser, Func<IParserResult, IParser> nextParserFunc, bool allowTrace = false)
         {
-            return new ChainedParser(previousParser, nextParserFunc, allowTrace);
+            return new ChainedParser(previousParser, nextParserFunc) { AllowTrace = allowTrace };
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace DevBrewLabs.Parserly
                 return seqParser;
             }
 
-            return new SequenceOfParser(new IParser[] { parser, nextParser }, allowTrace);
+            return new SequenceOfParser(new IParser[] { parser, nextParser }) { AllowTrace = allowTrace };
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace DevBrewLabs.Parserly
                 return choiceParser;
             }
 
-            return new ChoiceParser(new IParser[] { parser, nextParser }, allowTrace);
+            return new ChoiceParser(new IParser[] { parser, nextParser }) { AllowTrace = allowTrace };
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace DevBrewLabs.Parserly
         /// <returns>A many parser</returns>
         public static IParser<ArrayResult> Many(this IParser parser, int minCount = 0, int maxCount = -1, bool allowTrace = false)
         {
-            return new ManyParser(parser, minCount, maxCount, allowTrace);
+            return new ManyParser(parser, minCount, maxCount) { AllowTrace = allowTrace };
         }
 
         /// <summary>
@@ -133,17 +133,19 @@ namespace DevBrewLabs.Parserly
         /// <returns>A many parser</returns>
         public static IParser<ArrayResult> ManySeptBy(this IParser parser, IParser septByParser, int minCount = 0, int maxCount = -1, bool allowTrace = false)
         {
-            return new ManySeptByParser(parser, septByParser, minCount, maxCount, allowTrace);
+            return new ManySeptByParser(parser, septByParser, minCount, maxCount) { AllowTrace = allowTrace };
         }
 
         /// <summary>
         /// A parser to check the end of an input.
         /// </summary>
         /// <param name="parser"></param>
+        /// <param name="allowTrace"></param>
         /// <returns>End of input parser</returns>
-        public static IParser EndOfInput(this IParser parser)
+        public static IParser EndOfInput(this IParser parser, bool allowTrace = false)
         {
-            return parser.Next(x => Parser.EndOfInput);
+            var endOfInput = parser.EndOfInput(allowTrace);
+            return parser.Next(x => endOfInput, allowTrace);
         }
     }
 }

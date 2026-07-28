@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text;
 using DevBrewLabs.Parserly.Resources;
 
@@ -28,18 +28,23 @@ namespace DevBrewLabs.Parserly
         /// <returns></returns>
         public static StringResult ToStringResult(this ArrayResult arrayResult)
         {
-            var nodes = new Queue<IParserResult>();
-            nodes.Enqueue(arrayResult);
-            var stringBuilder = new StringBuilder();
+            // Use a Stack to flatten nested ArrayResults without LINQ or Queue overhead
+            var stack = new Stack<IParserResult>(arrayResult.Value.Length);
+            // Push in reverse order so we process in forward order
+            for (int i = arrayResult.Value.Length - 1; i >= 0; i--)
+                stack.Push(arrayResult.Value[i]);
 
-            while (nodes.Count != 0)
+            // Estimate capacity: each result contributes at least 1 char
+            var stringBuilder = new StringBuilder(arrayResult.Value.Length * 2);
+
+            while (stack.Count > 0)
             {
-                var item = nodes.Dequeue();
+                var item = stack.Pop();
 
                 if (item is ArrayResult aResult)
                 {
-                    for (int index = 0; index < aResult.Value.Length; index++)
-                        nodes.Enqueue(aResult.Value[index]);
+                    for (int i = aResult.Value.Length - 1; i >= 0; i--)
+                        stack.Push(aResult.Value[i]);
                 }
                 else
                 {
@@ -57,17 +62,13 @@ namespace DevBrewLabs.Parserly
         /// <returns></returns>
         public static DoubleResult ToDoubleResult(this StringResult stringResult)
         {
-            try
+            if (!string.IsNullOrEmpty(stringResult.Value) &&
+                double.TryParse(stringResult.Value, out double result))
             {
-                if (!string.IsNullOrEmpty(stringResult.Value))
-                    return new DoubleResult(double.Parse(stringResult.Value));
+                return new DoubleResult(result);
+            }
 
-                return DoubleResult.Invalid;
-            }
-            catch
-            {
-                return DoubleResult.Invalid;
-            }
+            return DoubleResult.Invalid;
         }
 
         /// <summary>
@@ -77,17 +78,13 @@ namespace DevBrewLabs.Parserly
         /// <returns></returns>
         public static BooleanResult ToBooleanResult(this StringResult stringResult)
         {
-            try
+            if (!string.IsNullOrEmpty(stringResult.Value) &&
+                bool.TryParse(stringResult.Value, out bool result))
             {
-                if (!string.IsNullOrEmpty(stringResult.Value))
-                    return new BooleanResult(bool.Parse(stringResult.Value));
+                return new BooleanResult(result);
+            }
 
-                return BooleanResult.Invalid;
-            }
-            catch
-            {
-                return BooleanResult.Invalid;
-            }
+            return BooleanResult.Invalid;
         }
     }
 }

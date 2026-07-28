@@ -7,11 +7,10 @@ namespace DevBrewLabs.Parserly
         public IParser Parser { get; }
         public Func<IParserError, IParserError> ErrorMap { get; }
 
-        public ErrorMappedParser(IParser parser, Func<IParserError, IParserError> errorMap, bool allowTrace)
+        public ErrorMappedParser(IParser parser, Func<IParserError, IParserError> errorMap)
         {
             Parser = parser;
             ErrorMap = errorMap;
-            AllowTrace = allowTrace;
         }
 
         protected override IParserState ParseInput(IParserState inputState)

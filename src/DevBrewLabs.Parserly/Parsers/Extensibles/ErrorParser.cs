@@ -4,10 +4,9 @@
     {
         private IParserError _error;
 
-        public ErrorParser(IParserError error, bool allowTrace)
+        public ErrorParser(IParserError error)
         {
             _error = error;
-            AllowTrace = allowTrace;
         }
 
         protected override IParserState ParseInput(IParserState inputState)

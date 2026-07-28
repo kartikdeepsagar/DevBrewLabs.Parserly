@@ -6,10 +6,9 @@ namespace DevBrewLabs.Parserly
     {
         private Lazy<IParser> _parser;
 
-        public LazyParser(Func<IParser> parser, bool allowTrace)
+        public LazyParser(Func<IParser> parser)
         {
             _parser = new Lazy<IParser>(parser);
-            AllowTrace = allowTrace;
         }
 
         protected override IParserState ParseInput(IParserState inputState)

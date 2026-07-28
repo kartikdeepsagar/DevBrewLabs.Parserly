@@ -1,43 +1,62 @@
-﻿using System.Text.RegularExpressions;
-using System.Threading;
+using System.Globalization;
 using DevBrewLabs.Parserly.Resources;
 
 namespace DevBrewLabs.Parserly.Parsers
 {
-    internal class NumberParser : RegexParser<DoubleResult>
+    internal class NumberParser : Parser<DoubleResult>
     {
-        public NumberParser(bool canParseDecimal, bool allowTrace) :
-            base(GetRegex(canParseDecimal), allowTrace)
+        private readonly bool _canParseDecimal;
+        private readonly char _decimalSeparator;
+
+        public NumberParser(bool canParseDecimal, char decimalSeparator)
         {
-            
+            _canParseDecimal = canParseDecimal;
+            _decimalSeparator = decimalSeparator;
         }
 
-        protected override DoubleResult ConvertResult(Match value)
+        protected override IParserState ParseInput(IParserState inputState)
         {
-            try
+            var input = inputState.ActualInput;
+            var start = inputState.Index;
+            var pos = start;
+            var length = input.Length;
+
+            // Optional leading sign
+            if (pos < length && (input[pos] == '+' || input[pos] == '-'))
+                pos++;
+
+            // Must have at least one digit
+            var digitStart = pos;
+            while (pos < length && char.IsDigit(input[pos]))
+                pos++;
+
+            if (pos == digitStart)
             {
-                if (string.IsNullOrEmpty(value.Value))
-                    return null;
-
-                return new DoubleResult(double.Parse(value.Value));
+                return ParserStates.Error(inputState, new ParserError(start,
+                    string.Format(ParserMessages.UnexpectedInputError, start, "number",
+                        pos < length ? input[pos].ToString() : string.Empty)));
             }
-            catch
+
+            // Optional decimal part
+            if (_canParseDecimal && pos < length && input[pos] == _decimalSeparator)
             {
-                return null;
+                var decimalPos = pos + 1;
+                while (decimalPos < length && char.IsDigit(input[decimalPos]))
+                    decimalPos++;
+
+                // Only consume the decimal point if digits follow it
+                if (decimalPos > pos + 1)
+                    pos = decimalPos;
             }
-        }
 
-        protected override IParserError CreateError(int index, string value)
-        {
-            return new ParserError(index, string.Format(ParserMessages.UnexpectedInputError, index, "number", value));
-        }
+            var numberStr = input.Substring(start, pos - start);
+            if (double.TryParse(numberStr, NumberStyles.Float, CultureInfo.CurrentCulture, out double value))
+            {
+                return ParserStates.Result(inputState, new DoubleResult(value), pos);
+            }
 
-        private static Regex GetRegex(bool canParseDecimal)
-        {
-            if (canParseDecimal)
-                return new Regex(@"^[\+\-]?[\d]*\" + Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator + @"?[\d]+", RegexOptions.Compiled);
-            else
-                return new Regex(@"^[\+\-]?[\d]+", RegexOptions.Compiled);
+            return ParserStates.Error(inputState, new ParserError(start,
+                string.Format(ParserMessages.UnexpectedInputError, start, "number", numberStr)));
         }
     }
 }

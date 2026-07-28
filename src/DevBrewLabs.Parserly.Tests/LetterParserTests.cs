@@ -11,7 +11,7 @@ namespace DevBrewLabs.Parserly.Tests
         [TestCase("P")]
         public void LetterParser_Success_Test(string value)
         {
-            var resultState = Parser.Letter.Run(value);
+            var resultState = Parser.AnyLetter().Run(value);
             Assert.AreEqual(resultState.Result.Type, ParserResultType.Char);
             Assert.IsFalse(resultState.IsError);
             Assert.IsInstanceOf(typeof(CharResult), resultState.Result);
@@ -25,7 +25,7 @@ namespace DevBrewLabs.Parserly.Tests
         [TestCase(";")]
         public void LetterParser_Failure_Test(string value)
         {
-            var resultState = Parser.Letter.Run(value);
+            var resultState = Parser.AnyLetter().Run(value);
             Assert.IsTrue(resultState.IsError);
         }
     }

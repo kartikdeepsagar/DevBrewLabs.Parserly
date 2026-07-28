@@ -1,42 +1,70 @@
-﻿using System.Text;
+using System.Text;
 
 namespace DevBrewLabs.Parserly
 {
     internal class StringValueParser : Parser<StringResult>
     {
-        private char _quoteChar;
+        private readonly char _quoteChar;
 
-        public StringValueParser(bool doubleQuotes, bool allowTrace)
+        public StringValueParser(bool doubleQuotes)
         {
             _quoteChar = doubleQuotes ? '"' : '\'';
-            AllowTrace = allowTrace;
         }
 
         protected override IParserState ParseInput(IParserState inputState)
         {
-            if (inputState.Input.Length == 0 || inputState.Input[0] != _quoteChar)
-                return ParserStates.Error(inputState, new ParserError(inputState.Index, $"Unexpected input. Expected '{_quoteChar}'."));
+            var input = inputState.ActualInput;
+            var start = inputState.Index;
 
-            var input = inputState.Input;
-            var strBuffer = new StringBuilder();
-            for (int index = 1; index < input.Length; index++)
+            if (start >= input.Length || input[start] != _quoteChar)
+                return ParserStates.Error(inputState, new ParserError(start, $"Unexpected input. Expected '{_quoteChar}'."));
+
+            // Scan for closing quote, handling doubled-quote escapes
+            // We only need a StringBuilder if there are escaped quotes
+            StringBuilder buffer = null;
+            var segmentStart = start + 1; // skip opening quote
+
+            for (int i = start + 1; i < input.Length; i++)
             {
-                if (input[index] == _quoteChar && (index != input.Length - 1 && input[index + 1] == _quoteChar))
+                if (input[i] == _quoteChar)
                 {
-                    strBuffer.Append(input[index]);
-                    index++;
-                }
-                else if (input[index] == _quoteChar && (index == input.Length - 1 || input[index + 1] != _quoteChar))
-                {
-                    return ParserStates.Result(inputState, new StringResult(strBuffer.ToString()), inputState.Index + index + 1);
-                }
-                else
-                {
-                    strBuffer.Append(input[index]);
+                    // Doubled quote escape: "" or ''
+                    if (i + 1 < input.Length && input[i + 1] == _quoteChar)
+                    {
+                        // Lazy-init the builder only when an escape is found
+                        if (buffer == null)
+                        {
+                            buffer = new StringBuilder(i - segmentStart + 16);
+                            buffer.Append(input, segmentStart, i - segmentStart);
+                        }
+                        else
+                        {
+                            buffer.Append(input, segmentStart, i - segmentStart);
+                        }
+                        buffer.Append(_quoteChar);
+                        segmentStart = i + 2;
+                        i++; // skip second quote
+                    }
+                    else
+                    {
+                        // Closing quote found
+                        string result;
+                        if (buffer != null)
+                        {
+                            buffer.Append(input, segmentStart, i - segmentStart);
+                            result = buffer.ToString();
+                        }
+                        else
+                        {
+                            // No escapes encountered — single allocation via Substring
+                            result = input.Substring(segmentStart, i - segmentStart);
+                        }
+                        return ParserStates.Result(inputState, new StringResult(result), i + 1);
+                    }
                 }
             }
 
-            return ParserStates.Error(inputState, new ParserError(inputState.Index, "Unexpected input. Expected a string value"));
+            return ParserStates.Error(inputState, new ParserError(start, "Unexpected input. Expected a string value"));
         }
     }
 }

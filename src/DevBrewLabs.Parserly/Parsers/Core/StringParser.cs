@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using DevBrewLabs.Parserly.Resources;
 
 namespace DevBrewLabs.Parserly
@@ -12,21 +12,24 @@ namespace DevBrewLabs.Parserly
         {
             Value = value;
             MatchCase = matchCase;
-            AllowTrace = true;
         }
 
         protected override IParserState ParseInput(IParserState inputState)
         {
-            var targetString = inputState.Input;
+            var input = inputState.ActualInput;
+            var index = inputState.Index;
+            var remaining = input.AsSpan(index);
+            var comparison = MatchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
-            if (Value.Length <= targetString.Length && targetString.StartsWith(Value, MatchCase ? StringComparison.Ordinal
-                : StringComparison.InvariantCultureIgnoreCase))
+            if (remaining.Length >= Value.Length &&
+                remaining.StartsWith(Value.AsSpan(), comparison))
             {
-                return ParserStates.Result(inputState, new StringResult(Value), inputState.Index + Value.Length);
+                return ParserStates.Result(inputState, new StringResult(Value), index + Value.Length);
             }
 
-            return ParserStates.Error(inputState, new ParserError(inputState.Index,
-                string.Format(ParserMessages.UnexpectedInputError, inputState.Index, Value, targetString)));
+            return ParserStates.Error(inputState, new ParserError(index,
+                string.Format(ParserMessages.UnexpectedInputError, index, Value,
+                    remaining.Length > 0 ? remaining.Slice(0, Math.Min(Value.Length, remaining.Length)).ToString() : string.Empty)));
         }
 
         public override string ToString()
